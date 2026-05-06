@@ -1,6 +1,6 @@
-# Projeto AV1 - Clima
+# AV1 - Projeto com API de Música
 
-Aplicação que consome API Open-Meteo
+Aplicação web que consome a API TheAudioDB para buscar álbuns de artistas.
 
 ## Tecnologias
 - HTML
@@ -9,6 +9,7 @@ Aplicação que consome API Open-Meteo
 - JavaScript
 
 ## Funcionalidades
-- Exibe clima atual
-- Loading
-- Tratamento de erro
+- Busca de artistas
+- Listagem de álbuns
+- Exibição dinâmica no DOM
+- Loading e tratamento de erros
