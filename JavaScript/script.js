@@ -1,60 +1,67 @@
-async function buscarAlbuns() {
-  const artista = document.getElementById("artista").value;
-  const resultado = document.getElementById("resultado");
-  const loading = document.getElementById("loading");
-  const erro = document.getElementById("erro");
+document.getElementById("artista").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    buscarDados();
+  }
+});
 
-  resultado.innerHTML = "";
-  erro.classList.add("d-none");
+async function buscarDados() {
+  const artista = document.getElementById("artista").value.trim();
+
+  const loading = document.getElementById("loading");
+  const error = document.getElementById("error");
+  const cards = document.getElementById("cards");
 
   if (!artista) {
-    erro.textContent = "Digite um artista!";
-    erro.classList.remove("d-none");
+    error.textContent = "Digite um artista!";
     return;
   }
 
   try {
-    loading.classList.remove("d-none");
+    loading.style.display = "block";
+    error.textContent = "";
+    cards.innerHTML = "";
 
-    const url = `https://theaudiodb.com/api/v1/json/2/searchalbum.php?s=${artista}`;
-    const resposta = await fetch(url);
+    const url = `https://www.theaudiodb.com/api/v1/json/2/searchalbum.php?s=${encodeURIComponent(artista)}`;
 
-    if (!resposta.ok) {
-      throw new Error("Erro na requisição");
+    const response = await fetch(url);
+
+    if (!response.ok) throw new Error("Erro na API");
+
+    const data = await response.json();
+
+    loading.style.display = "none";
+
+    if (!data.album) {
+      error.textContent = "Nenhum resultado encontrado.";
+      return;
     }
+    data.album.forEach(album => {
 
-    const dados = await resposta.json();
+      const imagem = album.strAlbumThumb || "https://via.placeholder.com/300";
 
-    if (!dados.album) {
-      throw new Error("Nenhum álbum encontrado");
-    }
+      cards.innerHTML += `
+        <div class="col-md-3 mb-4">
+          <a href="detalhes.html?id=${album.idAlbum}" class="text-decoration-none text-white">
 
-    mostrarAlbuns(dados.album);
+            <div class="card p-2 h-100">
 
-  } catch (e) {
-    erro.textContent = e.message;
-    erro.classList.remove("d-none");
-  } finally {
-    loading.classList.add("d-none");
-  }
-}
-function mostrarAlbuns(albuns) {
-  const resultado = document.getElementById("resultado");
+              <img src="${imagem}" class="card-img-top">
 
-  albuns.forEach(album => {
-    const imagem = album.strAlbumThumb || "https://via.placeholder.com/300x300";
+              <div class="card-body">
+                <h6>${album.strAlbum}</h6>
+                <p class="text-success">${album.strArtist}</p>
+              </div>
 
-    resultado.innerHTML += `
-      <div class="col-md-4 mb-4">
-        <div class="card shadow">
-          <img src="${imagem}" class="card-img-top">
-          <div class="card-body">
-            <h5 class="card-title">${album.strAlbum}</h5>
-            <p><strong>Ano:</strong> ${album.intYearReleased || "N/A"}</p>
-            <p><strong>Gênero:</strong> ${album.strGenre || "N/A"}</p>
-          </div>
+            </div>
+
+          </a>
         </div>
-      </div>
-    `;
-  });
+      `;
+    });
+
+  } catch (err) {
+    loading.style.display = "none";
+    error.textContent = "Erro ao buscar dados.";
+    console.error(err);
+  }
 }

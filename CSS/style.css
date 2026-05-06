@@ -1,8 +1,24 @@
 body {
-    background-color: #f8f9fa;
+  background-color: #121212;
+  color: white;
+}
+
+.card {
+  background-color: #181818;
+  border: none;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  background-color: #282828;
 }
 
 .card img {
-    height: 250px;
-    object-fit: cover;
+  height: 250px;
+  object-fit: cover;
+}
+
+h1 {
+  font-weight: bold;
 }
